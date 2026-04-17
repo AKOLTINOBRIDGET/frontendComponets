@@ -1,0 +1,275 @@
+<!-- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Form Validation Demo</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+      padding: 20px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 520px;
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 22px;
+      color: #111827;
+    }
+
+    p.note {
+      margin: 0 0 18px;
+      font-size: 13px;
+      color: #4b5563;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .error {
+      color: #b91c1c;
+      font-size: 12px;
+      margin-top: 5px;
+      min-height: 16px;
+    }
+
+    .field.invalid input {
+      border-color: #dc2626;
+      background: #fef2f2;
+    }
+
+    .field.valid input {
+      border-color: #16a34a;
+      background: #f0fdf4;
+    }
+
+    .password-rules {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 12px;
+      color: #374151;
+      margin-top: 8px;
+    }
+
+    .password-rules ul {
+      margin: 6px 0 0;
+      padding-left: 18px;
+    }
+
+    .password-rules li.ok {
+      color: #15803d;
+    }
+
+    .strength {
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .strength-bar {
+      height: 100%;
+      width: 0%;
+      transition: width 0.2s ease;
+    }
+
+    .strength-text {
+      font-size: 12px;
+      margin-top: 4px;
+      color: #374151;
+    }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.95;
+    }
+
+    .success {
+      display: none;
+      margin-top: 12px;
+      font-size: 13px;
+      color: #166534;
+      background: #ecfdf5;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <form class="card" id="signupForm" novalidate>
+    <h1>Registration Form</h1>
+    <p class="note">Client-side validation improves user experience. Real security must also be enforced on the server.</p>
+
+    <div class="field" id="firstNameField">
+      <label for="firstName">First Name</label>
+      <input type="text" id="firstName" name="firstName" placeholder="e.g. Steven" />
+      <div class="error" id="firstNameError"></div>
+    </div>
+
+    <div class="field" id="lastNameField">
+      <label for="lastName">Last Name</label>
+      <input type="text" id="lastName" name="lastName" placeholder="e.g. Stephen" />
+      <div class="error" id="lastNameError"></div>
+    </div>
+
+    <div class="field" id="ageField">
+      <label for="age">Age</label>
+      <input type="number" id="age" name="age" placeholder="e.g. 25" min="1" max="120" />
+      <div class="error" id="ageError"></div>
+    </div>
+
+    <div class="field" id="yearField">
+      <label for="birthYear">Birth Year</label>
+      <input type="number" id="birthYear" name="birthYear" placeholder="e.g. 2000" />
+      <div class="hint">We will check if age and birth year roughly match.</div>
+      <div class="error" id="yearError"></div>
+    </div>
+
+    <div class="field" id="passwordField">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Create a strong password" />
+      <div class="strength" aria-hidden="true">
+        <div class="strength-bar" id="strengthBar"></div>
+      </div>
+      <div class="strength-text" id="strengthText">Strength: -</div>
+
+      <div class="password-rules">
+        Password rules:
+        <ul id="rulesList">
+          <li id="ruleLength">At least 8 characters</li>
+          <li id="ruleUpper">At least 1 uppercase letter</li>
+          <li id="ruleLower">At least 1 lowercase letter</li>
+          <li id="ruleDigit">At least 1 number</li>
+          <li id="ruleSpecial">At least 1 special character</li>
+          <li id="ruleSpace">No spaces</li>
+        </ul>
+      </div>
+
+      <div class="error" id="passwordError"></div>
+    </div>
+
+    <div class="field" id="confirmPasswordField">
+      <label for="confirmPassword">Confirm Password</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter password" />
+      <div class="error" id="confirmPasswordError"></div>
+    </div>
+
+    <button type="submit">Submit</button>
+
+    <div class="success" id="successMessage">
+    </div>
+  </form>
+
+ 
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todo List</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="page_cards">
+    <article class="container">
+      <h2>Todo list</h2>
+      <input type="text" name="" id="taskInput" placeholder="Add a new task">
+      <button id="addBtn">Add</button>
+      <ul id="todoList" role="list"></ul>
+
+    </article>
+    <div class="cards">
+      <article class="container">
+        <h2>Todo list</h2>
+        <input type="text" name="" id="taskInput" placeholder="Add a new task">
+        <button id="addBtn">Add</button>
+        <ul id="todoList" role="list"></ul>
+
+      </article>
+      <article class="container">
+        <h2>Todo list</h2>
+        <input type="text" name="" id="taskInput" placeholder="Add a new task">
+        <button id="addBtn">Add</button>
+        <ul id="todoList" role="list"></ul>
+
+      </article>
+      <article class="container">
+        <h2>Todo list</h2>
+        <input type="text" name="" id="taskInput" placeholder="Add a new task">
+        <button id="addBtn">Add</button>
+        <ul id="todoList" role="list"></ul>
+
+      </article>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+
+</html>
